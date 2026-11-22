@@ -1,13 +1,21 @@
-interface LayoutControlsProps { onTable: () => void; disabled: boolean }
+import { LAYOUT_OPTIONS } from '../../layouts/layoutTargets'
+import type { LayoutName } from '../../types/layout'
 
-export function LayoutControls({ onTable, disabled }: LayoutControlsProps) {
+interface LayoutControlsProps {
+  selected: LayoutName
+  onSelect: (layout: LayoutName) => void
+  disabled: boolean
+}
+
+export function LayoutControls({ selected, onSelect, disabled }: LayoutControlsProps) {
   return (
     <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Visualization layout">
       <span className="mr-2 text-sm text-slate-400">Arrangement</span>
-      <button className="layout-active" type="button" aria-pressed="true" disabled={disabled} onClick={onTable}>▦ Table</button>
-      {['Sphere', 'Double Helix', 'Grid'].map((name) => (
-        <button className="layout-pending" type="button" disabled key={name} title={`${name} is not implemented in Phase 1`}>
-          {name} <span className="ml-1 text-xs">/ Later</span>
+      {LAYOUT_OPTIONS.map(({ name, label }) => (
+        <button className={name === selected ? 'layout-active' : 'layout-inactive'} type="button" disabled={disabled}
+          key={name} aria-pressed={name === selected} onClick={() => onSelect(name)}
+          title={name === 'helix' ? 'Double Helix: two intertwined strands' : label}>
+          {label}
         </button>
       ))}
     </div>

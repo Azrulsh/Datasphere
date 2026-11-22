@@ -8,7 +8,7 @@ export function AppLayout({ children, recordCount }: AppLayoutProps) {
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 px-5 py-5 sm:px-10">
         <a href="./" className="flex items-center gap-3 text-xl font-semibold tracking-tight" aria-label="DataSphere home">
           <span className="brand-orbit" aria-hidden="true">◉</span> DataSphere
-          <span className="rounded border border-white/15 px-2 py-1 text-xs font-normal tracking-wider text-slate-400">PHASE 01</span>
+          <span className="rounded border border-white/15 px-2 py-1 text-xs font-normal tracking-wider text-slate-400">PHASE 02</span>
         </a>
         <span className="text-sm text-slate-400">Interactive 3D data visualization</span>
       </header>
@@ -17,7 +17,7 @@ export function AppLayout({ children, recordCount }: AppLayoutProps) {
           <div>
             <p className="mb-2 text-xs font-medium tracking-[0.2em] text-cyan-400">PEOPLE, IN PERSPECTIVE</p>
             <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Explore the connections.</h1>
-            <p className="mt-3 max-w-xl text-base text-slate-400">Navigate a table of profiles. A different perspective on every person.</p>
+            <p className="mt-3 max-w-xl text-base text-slate-400">Explore profiles in four arrangements. A different perspective on every person.</p>
           </div>
           <div className="rounded-lg border border-cyan-400/20 bg-cyan-400/5 px-4 py-3 text-sm">
             <span className="font-medium text-cyan-300">Local sample dataset</span>
