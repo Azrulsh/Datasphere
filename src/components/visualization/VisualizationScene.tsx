@@ -56,10 +56,10 @@ export function VisualizationScene({ records, loading = false, sourceLabel = 'PR
           <button className="camera-button" type="button" disabled={inactive} onClick={() => controllerRef.current?.fitAll()}>Fit all</button>
           <button className="camera-button" type="button" disabled={inactive} onClick={() => controllerRef.current?.reset()}>Reset</button>
         </div>
-        <span className="pointer-events-none absolute top-4 left-5 text-xs tracking-wider text-slate-500">{layout.toUpperCase()} / {sourceLabel}</span>
+        <span className="pointer-events-none absolute top-4 left-5 text-xs tracking-wider text-slate-400">{layout.toUpperCase()} / {sourceLabel}</span>
       </div>
       <div className="flex flex-wrap justify-between gap-4 border-t border-white/10 px-5 py-4 text-sm text-slate-400">
-        <p id="scene-help">Drag to rotate · Scroll to zoom · Right-drag to pan<br className="sm:hidden" /><span className="text-xs text-slate-500"> · Touch: pinch / two-finger pan · Focus table + arrow keys to pan</span></p>
+        <p id="scene-help">Drag to rotate · Scroll to zoom · Right-drag to pan<br className="sm:hidden" /><span className="text-xs text-slate-400"> · Touch: pinch / two-finger pan · Focus table + arrow keys to pan</span></p>
         <div className="flex flex-wrap gap-x-5 gap-y-2" aria-label="Net worth legend in US dollars">
           <span><i className="legend-dot bg-red-400" /> &lt; $100k</span>
           <span><i className="legend-dot bg-orange-400" /> $100k–$200k</span>

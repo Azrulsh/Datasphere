@@ -43,7 +43,7 @@ export function SessionPanel({ snapshot, controller }: { snapshot: SessionSnapsh
           </button>}
           {snapshot.status === 'permission-denied' && <button type="button" className="camera-button" onClick={controller.authorize}>Authorize again</button>}
         </div>
-        <p className="mt-6 text-sm text-slate-500">DataSphere does not modify the spreadsheet. Signing out here does not sign you out of Google.</p>
+        <p className="mt-6 text-sm text-slate-400">DataSphere does not modify the spreadsheet. Signing out here does not sign you out of Google.</p>
       </div>
     </section>
   )

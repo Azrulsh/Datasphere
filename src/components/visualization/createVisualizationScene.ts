@@ -101,8 +101,8 @@ export function createVisualizationScene(host: HTMLDivElement, elements: HTMLDiv
     controls.target.copy(frame.target)
     camera.position.copy(frame.position)
     camera.up.set(0, 1, 0)
-    controls.update()
-    render()
+    // OrbitControls renders through its change listener when the pose changes.
+    if (!controls.update()) render()
   }
 
   let initialized = false
@@ -143,8 +143,7 @@ export function createVisualizationScene(host: HTMLDivElement, elements: HTMLDiv
       const offset = camera.position.clone().sub(controls.target)
       offset.setLength(MathUtils.clamp(offset.length() * factor, controls.minDistance, controls.maxDistance))
       camera.position.copy(controls.target).add(offset)
-      controls.update()
-      render()
+      if (!controls.update()) render()
     },
     dispose: () => {
       transition.dispose()

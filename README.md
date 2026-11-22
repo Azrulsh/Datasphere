@@ -1,10 +1,10 @@
-# DataSphere — Phase 4
+# DataSphere — Phase 5
 
 Interactive React + Vite + TypeScript visualization using Tailwind CSS v4 and Three.js CSS3D. Production data now comes from a private Google Sheet after separate Google sign-in and read-only OAuth authorization. The original 40 fictional records remain unchanged in `src/data/sampleRecords.ts` as development fixtures; they are not imported by the application and never appear as a fallback after a live-data failure.
 
 ## Run locally
 
-Use Node.js 24 LTS (validated with 24.22.2) and npm. Tests use Node's built-in test runner; server-rendered component tests use the existing TypeScript package through Node 24 import hooks. No new runtime or development dependencies were added in Phase 4.
+Use Node.js 24 LTS (validated with 24.22.2) and npm. Tests use Node's built-in test runner; server-rendered component tests use the existing TypeScript package through Node 24 import hooks. No new runtime or development dependencies were added in Phases 4–5.
 
 ```powershell
 npm.cmd install
@@ -17,6 +17,8 @@ Open **http://localhost:5173/**. Using strictPort avoids silently changing to an
 npm.cmd run lint
 npm.cmd run test
 npm.cmd run build
+npm.cmd audit
+npm.cmd audit --omit=dev
 git diff --check
 ```
 
@@ -77,7 +79,7 @@ Configuration accepts tab-qualified column ranges starting at row 1 and spanning
 
 The SDK/button handles Google account sign-in; the OAuth token client handles permission to access Sheets. These are separate operations. See the [GIS authentication reference](https://developers.google.com/identity/gsi/web/reference/js-reference), [authorization reference](https://developers.google.com/identity/oauth2/web/reference/js-reference) and [browser token model](https://developers.google.com/identity/oauth2/web/guides/use-token-model).
 
-### Files and responsibilities
+### Phase 4 files and responsibilities
 
 - `src/config/appConfig.ts`: validates client ID and reuses Phase 3 Sheet config validation.
 - `src/types/googleIdentity.ts`: minimal official GIS API surface, display user, grant and adapter contracts.
@@ -141,12 +143,13 @@ See Google's [OAuth error guide](https://developers.google.com/identity/oauth2/w
 ## Validation recorded
 
 - `npm.cmd run lint`: passed.
-- `npm.cmd run test`: **79 passed** (all 50 existing tests unchanged, 29 added). New coverage includes configuration, GIS loading/initialization, sign-in success/failure/cancellation retry, OAuth success/denial/scopes/popups, bearer handling, live data selection, generated 200-row parsing/geometry, malformed/empty data, network/401/403 states, refresh, expiry, revocation, sign-out, stale results/account changes and StrictMode-like teardown. UI tests server-render React components; they are not browser rendering tests.
+- `npm.cmd run test`: **85 passed** (all 79 Phase 1–4 tests unchanged, six added in Phase 5). Coverage includes configuration, GIS loading/initialization, sign-in success/failure/cancellation retry, OAuth success/denial/scopes/popups, bearer handling, live data selection, generated 200-row parsing/geometry, malformed/empty data, network/401/403 states, refresh, expiry, revocation, sign-out, stale results/account changes and StrictMode-like teardown. New coverage validates all six fields on 200 server-rendered tiles, rendered wealth boundaries, escaped/long text, changed-data refresh and real Three.js scene lifecycle with a synthetic DOM. These are not browser tests.
 - `npm.cmd run build`: passed TypeScript and production compilation.
 - `git diff --check`: passed.
+- `npm.cmd audit` and `npm.cmd audit --omit=dev`: zero reported vulnerabilities, including development and production dependencies (2026-11-23). No dependency upgrades were needed. This is an advisory snapshot, not a guarantee against unknown vulnerabilities.
 - Google SDK and HTTP behavior in automated tests is mocked. No real OAuth tokens or live Google API requests are used. Phase 2 browser acceptance was previously reported passed by the project owner; this is not a claim that the new Phase 4 flow has been browser-tested.
 
-## Security limitations and Phase 5
+## Security considerations and known limitations
 
 This is a **frontend-only application, not a server-verified application session**. JWT decoding and nonce/audience/issuer/expiry checks support display state only; they do not cryptographically verify the ID token's signature. Do not use this UI state as authorization for any future privileged server endpoint. Such an endpoint would need independent verification, as described in [Google's server verification guide](https://developers.google.com/identity/gsi/web/guides/verify-google-id-token). Google itself enforces private Sheets API access through the OAuth grant and spreadsheet permissions.
 
@@ -156,4 +159,32 @@ Browser JavaScript can access its own memory, so XSS or compromised dependencies
 
 Overview cards can be small or occluded in depth; orbit/zoom to inspect them. Back faces are hidden and cards can cross during transitions. CSS3DRenderer has browser/display-zoom limitations, so validate at 100% zoom. The parser accepts dynamic counts but the actual assignment dataset and external image availability still need live verification.
 
-Suggested **Phase 5**: complete the manual authenticated browser matrix with the real 200-row Sheet, profile 200-card performance/cleanup, validate deployment origins/headers and Google consent requirements, and address accessibility/image-delivery findings. No backend, database, unrelated dashboard, commits or pushes are part of Phase 4.
+Phase 5 reduces duplicate camera renders, memoizes unchanged profile tiles, corrects portrait descriptions, contains long country/wealth lines and raises secondary text contrast. Scene tests check 200 objects across repeated arrangements, rapid cancellation, teardown/remount, zero-size/portrait resize and Fit all card-corner framing in landscape and portrait views. Browser frame rate, heap retention, touch behavior and assistive-technology behavior are still manual checks. See the [Phase 5 acceptance audit](docs/phase-5-qa.md) for evidence, changed files, remaining limitations and the acceptance checklist.
+
+## Vercel deployment preparation (not deployed)
+
+Perform these steps only after the project owner authorizes deployment. No deployment, commit, push or Google Cloud change was made during Phase 5.
+
+1. Import the intended Git repository into Vercel; select the project root containing `package.json`. Choose the **Vite** framework preset, Node.js **24.x**, build command **`npm run build`** and output directory **`dist`**. Use the committed lockfile for reproducible installation (`npm ci`). See [Vercel's Vite guide](https://vercel.com/docs/frameworks/frontend/vite).
+2. In the appropriate Vercel environment (Production, and Preview only when needed), add `VITE_GOOGLE_CLIENT_ID`, `VITE_GOOGLE_SHEET_ID` and `VITE_GOOGLE_SHEET_RANGE`. Use public identifiers and the actual private Sheet/tab range, never tokens or secrets. Include row 1 and all 200 records: `Sheet1!A:F` or the actual tab-qualified `A1:F201` range. These values are bundled at build time; redeploy after changing them.
+3. Obtain the final stable HTTPS hostname/custom domain. In **Google Cloud / Google Auth Platform → Clients → the same Web application client → Authorized JavaScript origins**, register its exact origin, e.g. `https://your-project.vercel.app`, without a path. Save and allow propagation. Register preview origins individually only when deliberately used; a changing preview URL is not a stable reviewer URL. Popup callbacks need no new application redirect endpoint. Follow [Google's origin and header guidance](https://developers.google.com/identity/gsi/web/guides/get-google-api-clientid).
+4. Confirm Sheets API is enabled in that project, the consent audience permits the reviewer, `spreadsheets.readonly` is configured, and the reviewer's Google account has private Sheet Viewer access. Cloud configuration and deployment require owner approval.
+5. After an authorized deployment, run the entire manual acceptance checklist on the final HTTPS origin. Check root refresh, favicon/CSS/JS loading, response headers, Google popup communication, live count/order, external images, refresh, expiry and sign-out. Check console/network errors without copying private response bodies or tokens.
+
+`vercel.json` adds three response headers: `nosniff`, `strict-origin-when-cross-origin`, and `Cross-Origin-Opener-Policy: same-origin-allow-popups` to preserve GIS popup communication. Syntax follows [Vercel's header configuration](https://vercel.com/docs/project-configuration/vercel-json#headers); headers have not been validated on a hosted deployment. No enforced CSP is added: GIS scripts/frames/connections, Sheets API, arbitrary validated HTTPS photo hosts and CSS3D inline styles need a deliberate compatible policy. Follow Google's setup guidance and test any future policy before enforcing it.
+
+The app currently has only the root route, so it needs no SPA catch-all rewrite. Vite emits hashed JS/CSS and copies the favicon; production source maps are not enabled. No cache override is introduced: retain Vercel's framework/CDN defaults, then verify HTML revalidation and hashed asset behavior on the actual host. `npm run preview` can smoke-test the local build but cannot verify Vercel response headers or replace deployed QA.
+
+## Approved reviewer access and submission checklist
+
+A public Vercel website **does not make OAuth publicly accessible**. External OAuth in Testing permits only the approved test audience; add the actual reviewer's Google account as a test user and separately grant private Sheet Viewer access. Internal Workspace audience/account policies may exclude outside reviewers. Coordinate an allowed reviewer account before submission. Do not publish OAuth merely to bypass tester restrictions; broader public access must meet Google's [production policy and verification requirements](https://developers.google.com/identity/protocols/oauth2/production-readiness/policy-compliance).
+
+- [ ] Owner approves publishing and Cloud changes; deploy the reviewed revision to a stable HTTPS URL.
+- [ ] Register that exact production origin on the configured Web OAuth client.
+- [ ] Reviewer can reach the site without an unintended Vercel access gate and can complete Google sign-in/Sheets consent with their approved account.
+- [ ] Original CSV is imported into the private Sheet, and the configured range returns all 200 rows in source order with all six fields correct.
+- [ ] Complete the manual browser checklist below/above and the detailed [Phase 5 checklist](docs/phase-5-qa.md#manual-browser-acceptance); record browser/device/date/results without credentials.
+- [ ] Recheck lint, all tests, build, dependency audit and diff before the eventual approved commit/push.
+- [ ] Submit the working URL and required project/documentation details. Do not submit credentials or make the private Sheet public.
+
+The working hosted URL, real dataset confirmation and authenticated browser acceptance remain outstanding submission requirements.
