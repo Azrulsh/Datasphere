@@ -6,9 +6,9 @@ import { DataTile } from './DataTile'
 import { LayoutControls } from './LayoutControls'
 import { createVisualizationScene } from './createVisualizationScene'
 
-interface VisualizationSceneProps { records: readonly Person[]; loading?: boolean }
+interface VisualizationSceneProps { records: readonly Person[]; loading?: boolean; sourceLabel?: string }
 
-export function VisualizationScene({ records, loading = false }: VisualizationSceneProps) {
+export function VisualizationScene({ records, loading = false, sourceLabel = 'PROFILE DATA' }: VisualizationSceneProps) {
   const hostRef = useRef<HTMLDivElement>(null)
   const controllerRef = useRef<ReturnType<typeof createVisualizationScene> | null>(null)
   const [layout, setLayout] = useState<LayoutName>('table')
@@ -48,7 +48,7 @@ export function VisualizationScene({ records, loading = false }: VisualizationSc
         {!inactive && records.map((person, index) => createPortal(<DataTile person={person} index={index} />, elements[index], String(index)))}
         {inactive && <div role="status" className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
           <span className="text-lg font-medium">{loading ? 'Preparing your profiles…' : 'No profiles to explore'}</span>
-          <p className="text-sm text-slate-400">{loading ? 'Setting up the visualization.' : 'Add records to the local dataset to get started.'}</p>
+          <p className="text-sm text-slate-400">{loading ? 'Setting up the visualization.' : 'The selected data source contains no profiles.'}</p>
         </div>}
         <div className="absolute right-4 bottom-4 flex gap-1 rounded-lg border border-white/10 bg-[#101827]/95 p-1" role="group" aria-label="Camera controls">
           <button className="camera-button" type="button" disabled={inactive} aria-label="Zoom out" onClick={() => controllerRef.current?.zoom(1.25)}>−</button>
@@ -56,7 +56,7 @@ export function VisualizationScene({ records, loading = false }: VisualizationSc
           <button className="camera-button" type="button" disabled={inactive} onClick={() => controllerRef.current?.fitAll()}>Fit all</button>
           <button className="camera-button" type="button" disabled={inactive} onClick={() => controllerRef.current?.reset()}>Reset</button>
         </div>
-        <span className="pointer-events-none absolute top-4 left-5 text-xs tracking-wider text-slate-500">{layout.toUpperCase()} / LOCAL PREVIEW</span>
+        <span className="pointer-events-none absolute top-4 left-5 text-xs tracking-wider text-slate-500">{layout.toUpperCase()} / {sourceLabel}</span>
       </div>
       <div className="flex flex-wrap justify-between gap-4 border-t border-white/10 px-5 py-4 text-sm text-slate-400">
         <p id="scene-help">Drag to rotate · Scroll to zoom · Right-drag to pan<br className="sm:hidden" /><span className="text-xs text-slate-500"> · Touch: pinch / two-finger pan · Focus table + arrow keys to pan</span></p>
