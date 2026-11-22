@@ -1,0 +1,57 @@
+import { useEffect, useMemo, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import type { Person } from '../../types/person'
+import { DataTile } from './DataTile'
+import { LayoutControls } from './LayoutControls'
+import { createTableScene } from './createTableScene'
+
+interface VisualizationSceneProps { records: readonly Person[]; loading?: boolean }
+
+export function VisualizationScene({ records, loading = false }: VisualizationSceneProps) {
+  const hostRef = useRef<HTMLDivElement>(null)
+  const controllerRef = useRef<ReturnType<typeof createTableScene> | null>(null)
+  const elements = useMemo(() => records.map(() => document.createElement('div')), [records])
+  const inactive = loading || records.length === 0
+
+  useEffect(() => {
+    if (!hostRef.current || inactive) return
+    const controller = createTableScene(hostRef.current, elements)
+    controllerRef.current = controller
+    return () => {
+      controllerRef.current = null
+      controller.dispose()
+    }
+  }, [elements, inactive])
+
+  return (
+    <section className="overflow-hidden rounded-xl border border-white/10 bg-[#0c121d]" aria-label="Profile visualization">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 px-4 py-3 sm:px-5">
+        <LayoutControls disabled={inactive} onTable={() => controllerRef.current?.reset()} />
+        <span className="text-xs text-slate-500">20 columns · {Math.ceil(records.length / 20)} rows</span>
+      </div>
+      <div className="scene-shell relative">
+        <div ref={hostRef} tabIndex={inactive ? -1 : 0} role="region" aria-label="3D profile table. Drag to rotate, scroll to zoom, right-drag or arrow keys to pan." aria-describedby="scene-help" className="absolute inset-0 overflow-hidden outline-offset-[-3px]" />
+        {!inactive && records.map((person, index) => createPortal(<DataTile person={person} index={index} />, elements[index], String(index)))}
+        {inactive && <div role="status" className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+          <span className="text-lg font-medium">{loading ? 'Preparing your profiles…' : 'No profiles to explore'}</span>
+          <p className="text-sm text-slate-400">{loading ? 'Setting up the visualization.' : 'Add records to the local dataset to get started.'}</p>
+        </div>}
+        <div className="absolute right-4 bottom-4 flex gap-1 rounded-lg border border-white/10 bg-[#101827]/95 p-1" role="group" aria-label="Camera controls">
+          <button className="camera-button" type="button" disabled={inactive} aria-label="Zoom out" onClick={() => controllerRef.current?.zoom(1.25)}>−</button>
+          <button className="camera-button" type="button" disabled={inactive} aria-label="Zoom in" onClick={() => controllerRef.current?.zoom(0.8)}>+</button>
+          <button className="camera-button" type="button" disabled={inactive} onClick={() => controllerRef.current?.fitAll()}>Fit all</button>
+          <button className="camera-button" type="button" disabled={inactive} onClick={() => controllerRef.current?.reset()}>Reset</button>
+        </div>
+        <span className="pointer-events-none absolute top-4 left-5 text-xs tracking-wider text-slate-500">TABLE / LOCAL PREVIEW</span>
+      </div>
+      <div className="flex flex-wrap justify-between gap-4 border-t border-white/10 px-5 py-4 text-sm text-slate-400">
+        <p id="scene-help">Drag to rotate · Scroll to zoom · Right-drag to pan<br className="sm:hidden" /><span className="text-xs text-slate-500"> · Touch: pinch / two-finger pan · Focus table + arrow keys to pan</span></p>
+        <div className="flex flex-wrap gap-x-5 gap-y-2" aria-label="Net worth legend in US dollars">
+          <span><i className="legend-dot bg-red-400" /> &lt; $100k</span>
+          <span><i className="legend-dot bg-orange-400" /> $100k–$200k</span>
+          <span><i className="legend-dot bg-emerald-400" /> &gt; $200k</span>
+        </div>
+      </div>
+    </section>
+  )
+}

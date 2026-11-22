@@ -1,0 +1,51 @@
+import type { Person } from '../types/person'
+
+// Fictional development records, not the assignment CSV or Google Sheets data.
+const samples: Array<[string, number, string, string, number]> = [
+  ['Amira Hassan', 29, 'Malaysia', 'Photography', 85_000],
+  ['Daniel Kim', 34, 'South Korea', 'Architecture', 145_000],
+  ['Sofia Rossi', 27, 'Italy', 'Design', 260_000],
+  ['James Wilson', 41, 'United Kingdom', 'Cycling', 100_000],
+  ['Priya Sharma', 31, 'India', 'Technology', 200_000],
+  ['Lucas Silva', 26, 'Brazil', 'Music', 62_000],
+  ['Mei Tan', 35, 'Singapore', 'Travel', 340_000],
+  ['Oliver Chen', 30, 'Taiwan', 'Film', 175_000],
+  ['Aisha Bello', 28, 'Nigeria', 'Literature', 98_000],
+  ['Noah Martin', 38, 'Canada', 'Hiking', 425_000],
+  ['Emma Laurent', 33, 'France', 'Art', 150_000],
+  ['Ravi Patel', 36, 'India', 'Robotics', 285_000],
+  ['Hana Sato', 25, 'Japan', 'Ceramics', 72_000],
+  ['Leo Fischer', 42, 'Germany', 'Astronomy', 520_000],
+  ['Isabella Costa', 32, 'Portugal', 'Cooking', 125_000],
+  ['Ethan Brooks', 29, 'Australia', 'Surfing', 99_999],
+  ['Zara Ahmed', 37, 'Pakistan', 'Education', 200_001],
+  ['Mateo Garcia', 40, 'Spain', 'Sailing', 195_000],
+  ['Lily Nguyen', 24, 'Vietnam', 'Illustration', 48_000],
+  ['Adam Ibrahim', 39, 'Egypt', 'History', 310_000],
+  ['Nora Ali', 28, 'Malaysia', 'Gardening', 76_000],
+  ['Alex Morgan', 35, 'United States', 'Running', 180_000],
+  ['Chloe Dubois', 31, 'France', 'Fashion', 225_000],
+  ['Omar Khalil', 43, 'Jordan', 'Chess', 130_000],
+  ['Yuna Park', 26, 'South Korea', 'Animation', 90_000],
+  ['Ben Taylor', 34, 'New Zealand', 'Climbing', 240_000],
+  ['Sara Andersson', 38, 'Sweden', 'Sustainability', 370_000],
+  ['Arjun Rao', 27, 'India', 'Gaming', 110_000],
+  ['Maya Santos', 30, 'Philippines', 'Dance', 65_000],
+  ['Felix Weber', 45, 'Germany', 'Engineering', 480_000],
+  ['Grace Lee', 32, 'Singapore', 'Wellness', 165_000],
+  ['Theo Brown', 29, 'United Kingdom', 'Podcasts', 95_000],
+  ['Elena Popov', 36, 'Bulgaria', 'Mathematics', 205_000],
+  ['Sam Okafor', 33, 'Nigeria', 'Entrepreneurship', 290_000],
+  ['Iris de Vries', 28, 'Netherlands', 'Urbanism', 155_000],
+  ['Kai Wong', 41, 'Hong Kong', 'Investing', 610_000],
+  ['Ana Oliveira', 25, 'Brazil', 'Theatre', 55_000],
+  ['Finn Murphy', 37, 'Ireland', 'Writing', 190_000],
+  ['Leila Haddad', 34, 'Lebanon', 'Food', 230_000],
+  ['Ryan Lim', 30, 'Malaysia', 'Open source', 120_000],
+]
+
+export const sampleRecords: Person[] = samples.map(([name, age, country, interest, netWorth], index) => ({
+  name, age, country, interest, netWorth,
+  // External placeholder portraits are unrelated to the fictional identities.
+  photo: `https://i.pravatar.cc/96?img=${index + 1}`,
+}))
