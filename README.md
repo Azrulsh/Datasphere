@@ -1,5 +1,7 @@
 # DataSphere — Phase 5
 
+Phase 6 release preparation is documented in the [release runbook](docs/phase-6-release.md), including the current requirement audit, proposed Git commands, local/production acceptance gates, reviewer access and a preliminary submission email. Automated checks pass; Phase 6 remains pending until the real dataset, authenticated production flow and submission URL are verified. No publishing actions are authorized by this document.
+
 Interactive React + Vite + TypeScript visualization using Tailwind CSS v4 and Three.js CSS3D. Production data now comes from a private Google Sheet after separate Google sign-in and read-only OAuth authorization. The original 40 fictional records remain unchanged in `src/data/sampleRecords.ts` as development fixtures; they are not imported by the application and never appear as a fallback after a live-data failure.
 
 ## Run locally
@@ -183,7 +185,7 @@ A public Vercel website **does not make OAuth publicly accessible**. External OA
 - [ ] Register that exact production origin on the configured Web OAuth client.
 - [ ] Reviewer can reach the site without an unintended Vercel access gate and can complete Google sign-in/Sheets consent with their approved account.
 - [ ] Original CSV is imported into the private Sheet, and the configured range returns all 200 rows in source order with all six fields correct.
-- [ ] Complete the manual browser checklist below/above and the detailed [Phase 5 checklist](docs/phase-5-qa.md#manual-browser-acceptance); record browser/device/date/results without credentials.
+- [ ] Complete the manual browser checklist and the detailed [Phase 5 checklist](docs/phase-5-qa.md#manual-browser-acceptance); record browser/device/date/results without credentials.
 - [ ] Recheck lint, all tests, build, dependency audit and diff before the eventual approved commit/push.
 - [ ] Submit the working URL and required project/documentation details. Do not submit credentials or make the private Sheet public.
 
