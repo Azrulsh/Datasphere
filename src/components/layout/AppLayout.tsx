@@ -13,7 +13,6 @@ export function AppLayout({ children, sourceLabel, sourceDetail, actions }: AppL
       <header className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 px-5 py-5 sm:px-10">
         <a href="./" className="flex items-center gap-3 text-xl font-semibold tracking-tight" aria-label="DataSphere home">
           <span className="brand-orbit" aria-hidden="true">◉</span> DataSphere
-          <span className="rounded border border-white/15 px-2 py-1 text-xs font-normal tracking-wider text-slate-400">PHASE 05</span>
         </a>
         {actions ?? <span className="text-sm text-slate-400">Interactive 3D data visualization</span>}
       </header>
